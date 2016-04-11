@@ -20,5 +20,5 @@ Stram<String> one = Stream.cons(() -> "Just one", () -> Stream.empty());
 Stream<String> one = Stream.cons(() -> "one", () -> Stream.cons(() -> "second", () -> Stream.empty())).filter("one"::equals); // Stream with one element
 
 // Constant stream of ones
-Stream <Integer> ones = Stream.constant(1);
+Stream<Integer> ones = Stream.constant(1);
 ```
