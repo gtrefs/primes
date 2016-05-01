@@ -11,9 +11,8 @@ public interface Stream<T> {
 		return new Cons<>(head, rest);
 	}
 	
-	@SuppressWarnings("unchecked")
 	static <T> Stream<T> empty(){
-		return (Stream<T>) StreamSupport.EMPTY;
+		return StreamSupport.empty();
 	}
 	
 	static <T> Stream<T> constant(T u){
@@ -79,11 +78,16 @@ public interface Stream<T> {
 
 	class StreamSupport {
 		@SuppressWarnings("rawtypes")
-		public static final Stream EMPTY = new Stream(){
+		private static final Stream EMPTY = new Stream(){
 			public String toString() {
 				return "EMPTY";
 			};
 		}; 
+		
+		@SuppressWarnings("unchecked")
+		public static <T> Stream<T> empty(){
+		   return (Stream<T>) EMPTY; 
+		}
 
 	}
 }

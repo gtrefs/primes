@@ -1,35 +1,37 @@
 package de.gtrefs.util;
 
 import static org.hamcrest.CoreMatchers.*;
+import static de.gtrefs.util.Stream.StreamSupport.empty;
+import static de.gtrefs.util.Stream.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-import de.gtrefs.util.Stream.Cons;
+import de.gtrefs.util.Stream;
 
 public class StreamShould {
 	
 	@Test
 	public void beMadeOfLazyCons(){
-		Cons<String> one = Stream.cons(() -> "Just one", () -> Stream.empty());
+		Cons<String> one = cons(() -> "Just one", () -> empty());
 		assertThat(one.head.get(), is("Just one"));
-		assertThat(one.tail.get(), is(Stream.StreamSupport.EMPTY));
+		assertThat(one.tail.get(), is(empty()));
 	}
 	
 	@Test
 	public void beEmptyWhenAllElementsAreFiltered(){
-		final Stream<String> empty = Stream.cons(() -> "one", () -> Stream.cons(() -> "second", () -> Stream.empty())).filter("nope"::equals);
-		assertThat(empty, is(Stream.StreamSupport.EMPTY));
+		final Stream<String> empty = cons(() -> "one", () -> cons(() -> "second", () -> empty())).filter("nope"::equals);
+		assertThat(empty, is(empty()));
 	}
 	
 	@Test
 	public void containOnlyElementsWhichAreNotFiltered(){
-		final Stream<String> empty = Stream.cons(() -> "one", () -> Stream.cons(() -> "second", () -> Stream.empty())).filter("one"::equals);
-		assertThat(empty, is(Stream.cons(() -> "one", () -> Stream.empty())));
+		final Stream<String> empty = cons(() -> "one", () -> cons(() -> "second", () -> empty())).filter("one"::equals);
+		assertThat(empty, is(cons(() -> "one", () -> empty())));
 	}
 	
 	@Test
 	public void containSameNumberIfConstantStream(){
-		Cons<Integer> ones = (Cons<Integer>) Stream.constant(1);
+		Cons<Integer> ones = (Cons<Integer>) constant(1);
 		for (int i = 0; i < 10; i++) {
 			assertThat(ones.head.get(), is(1));
 			ones = (Cons<Integer>) ones.tail.get();
