@@ -49,6 +49,24 @@ public class StreamShould {
 	}
 	
 	@Test
+	public void notMatchIfElementsOfStreamAreNot2(){
+		Stream<Integer> ones = cons(() -> 1, () -> cons(() -> 3, () -> empty()));
+		
+		boolean noneMatch = ones.noneMatch(i -> i == 2);
+		
+		assertThat(noneMatch, is(true));
+	}
+	
+	@Test
+	public void matchIfElementofStreamIs2(){
+		Stream<Integer> stream = from(1);
+		
+		boolean noneMatch = stream.noneMatch(i -> i == 2);
+		
+		assertThat(noneMatch, is(false));
+	}
+	
+	@Test
 	public void containOnlyPrimesWhenIfPrimeStream(){
 		Cons<Integer> primes = (Cons<Integer>) Stream.primes();
 		for (int i = 0; i < 20; i++) {

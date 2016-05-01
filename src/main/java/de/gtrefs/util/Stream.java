@@ -33,17 +33,22 @@ public interface Stream<T> {
 		});
 	}
 	
-	public default Stream<T> filter(Predicate<T> p){
+	default Stream<T> filter(Predicate<T> p){
 		return foldRight(() -> Stream.<T>empty(), (el, stream) -> p.test(el)? cons(() -> el, stream) : stream.get());
 	}
 	
-	public default <U> U foldRight(Supplier<U> z, BiFunction<T, Supplier<U>, U> f){
+	default <U> U foldRight(Supplier<U> z, BiFunction<T, Supplier<U>, U> f){
 		if(this instanceof Cons){
 			final Cons<T> self = (Cons<T>) this;
 			return f.apply(self.head.get(), () -> self.tail.get().foldRight(z, f));
 		} else {
 			return z.get();
 		}
+		
+	}
+	
+	default boolean noneMatch(Predicate<T> p){
+		return filter(p) == empty();
 	}
 	
 	public class Cons<T> implements Stream<T>{
@@ -90,4 +95,5 @@ public interface Stream<T> {
 		}
 
 	}
+
 }
