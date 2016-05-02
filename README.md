@@ -11,10 +11,10 @@ It provides an implementation for
 - `rangeClosed`: Range from `start` to `end` (inlcusive)
 - `noneMatch`: True if none of the elements in a stream fullfills the predicate
 - `anyMatch`: True if at least one element in a stream fullfills the predicate
-- `allMatch`: True if all element in a stream fullfills the predicate
-- `limit`: limit the amount elements in the stream 
+- `allMatch`: True if all elements in a stream fullfill the predicate
+- `limit`: limits the amount elements in the stream 
 
-Primes generation can also be done with Java 8s Stream implementation (see in test source package).
+Primes generation can also be done with Java 8s Stream implementation (look into test source package).
 
 # Examples
 ```Java
