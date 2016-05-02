@@ -8,6 +8,11 @@ It provides an implementation for
 - `filter`: Filter a stream for elements which yield true for a given predicate
 - `foldRight`: Reduce the stream to one value with given aggreagate `BiFunction` and neutral element `z`.
 - `primes`: Infinite stream of prime numbers
+- `rangeClosed`: Range from `start` to `end` (inlcusive)
+- `noneMatch`: True if none of the elements in a stream fullfills the predicate
+- `anyMatch`: True if at least one element in a stream fullfills the predicate
+- `allMatch`: True if all element in a stream fullfills the predicate
+- `limit`: limit the amount elements in the stream 
 
 Primes generation can also be done with Java 8s Stream implementation (see in test source package).
 
