@@ -2,10 +2,13 @@ package de.gtrefs.util;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public interface Stream<T> {
+	
+	final static IntPredicate isPrime = x -> rangeClosed(2, (int) (Math.sqrt(x))).allMatch(n -> x % n != 0);
 	
 	static <T> Cons<T> cons(Supplier<T> head, Supplier<Stream<T>> rest){
 		return new Cons<>(head, rest);
@@ -24,13 +27,12 @@ public interface Stream<T> {
 	}
 	
 	static Stream<Integer> primes(){
-		return Stream.from(1).filter(i -> {
-			final int sqrt = (int) Math.sqrt(i);
-			for(int j=2;j<=sqrt;j++){
-				if(i % j == 0) return false; 
-			}
-			return true;
-		});
+		return Stream.from(1).filter(isPrime::test);
+	}
+	
+	static Stream<Integer> rangeClosed(int i, int j){
+		if(j < i) return empty();
+		return cons(() -> i, () -> i<j ? rangeClosed(i+1, j) : empty());
 	}
 	
 	default Stream<T> filter(Predicate<T> p){
@@ -41,14 +43,29 @@ public interface Stream<T> {
 		if(this instanceof Cons){
 			final Cons<T> self = (Cons<T>) this;
 			return f.apply(self.head.get(), () -> self.tail.get().foldRight(z, f));
-		} else {
-			return z.get();
 		}
-		
+		return z.get();
 	}
 	
 	default boolean noneMatch(Predicate<T> p){
 		return filter(p) == empty();
+	}
+	
+	default boolean anyMatch(Predicate<T> p){
+		return filter(p) != empty();
+	}
+	
+	default boolean allMatch(Predicate<T> p){
+		return noneMatch(p.negate());
+	}
+
+	default Stream<T> limit(int i){
+		if(i == 0) return empty();
+		if(this instanceof Cons){
+			final Cons<T> self = (Cons<T>) this;
+			return cons(self.head, () -> self.tail.get().limit(i-1));
+		}
+		return empty();
 	}
 	
 	public class Cons<T> implements Stream<T>{

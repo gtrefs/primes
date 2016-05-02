@@ -1,12 +1,17 @@
 package de.gtrefs.util;
 
-import static org.hamcrest.CoreMatchers.*;
-import static de.gtrefs.util.Stream.StreamSupport.empty;
 import static de.gtrefs.util.Stream.*;
-import static org.junit.Assert.*;
+import static de.gtrefs.util.Stream.StreamSupport.empty;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
 
-import de.gtrefs.util.Stream;
+import de.gtrefs.util.Stream.Cons;
 
 public class StreamShould {
 	
@@ -67,10 +72,101 @@ public class StreamShould {
 	}
 	
 	@Test
+	public void matchIfElementsOfStreamContains2(){
+		Stream<Integer> stream = from(1);
+		
+		boolean match = stream.anyMatch(i -> i == 2);
+		
+		assertThat(match, is(true));
+	}
+	
+	@Test
+	public void matchShouldBeTheOppositeOfNoneMatch(){
+		Stream<Integer> stream = cons(() -> 2, () -> cons(() -> 4, () -> empty()));
+		
+		boolean match = stream.anyMatch(i -> i % 2 == 0);
+		boolean noneMatch = stream.noneMatch(i -> i % 2 == 0);
+	
+		assertThat(match, is(not(noneMatch)));
+	}
+	
+	@Test
+	public void allMatchShouldMatchIfThereIsNoElementWhereThePredicateDoesNotHold(){
+		Stream<Integer> stream = cons(() -> 2, () -> cons(() -> 4, () -> empty()));
+		
+		boolean match = stream.allMatch(i -> i % 2 == 0);
+		boolean noneMatch = stream.noneMatch(i -> i % 2 == 0);
+	
+		assertThat(match, is(not(noneMatch)));
+	}
+	
+	@Test
+	public void generateStreamWithinRange(){
+		Stream<Integer> streamRange = Stream.rangeClosed(8,9);
+		Stream<Integer> manualStream = cons(() -> 8, () -> cons(() -> 9, () -> empty()));
+		
+		assertThat(streamRange, is(manualStream));
+	}
+	
+	@Test
+	public void generateRangeWithLowerBoundInclusiveAndUpperBoundInclusive(){
+		Stream<Integer> streamRange = Stream.rangeClosed(1, 3);
+		boolean lowerBoundIsOne = streamRange.anyMatch(i -> i == 1);
+		boolean upperBoundIsNot3 = streamRange.noneMatch(i -> i >= 4);
+		
+		assertThat(lowerBoundIsOne, is(true));
+		assertThat(upperBoundIsNot3, is(true));
+	}
+	
+	@Test
+	public void generateEmptyRangeIfUpperBoundIsLowerThanLowerBound(){
+		assertThat(Stream.rangeClosed(3, 2), is(empty()));
+	}
+	
+	@Test
+	public void generateRangeWithOneElementIfUpperBoundIsowerBound(){
+		assertThat(Stream.rangeClosed(3, 3), is(cons(() -> 3, () -> empty())));
+	}
+	
+	@Test
+	public void limitInfiniteStreamTo1(){
+		Stream<Integer> limited = constant(1).limit(1);
+		
+		assertThat(limited, is(cons(() -> 1, () -> empty())));
+	}
+	
+	@Test
+	public void limitInfiniteStreamTo2(){
+		Stream<Integer> limited = constant(1).limit(2);
+		
+		Cons<Integer> expected = cons(() -> 1, () -> cons(() -> 1, () -> empty()));
+		
+		assertThat(limited, is(expected));
+	}
+	
+	@Test
+	public void limitInfiteStreamToEmptyWhenLimitIs0(){
+		Stream<Integer> limited = constant(1).limit(0);
+		
+		assertThat(limited, is(empty()));
+	}
+	
+	@Test
+	public void limitEmptyToEmpty(){
+		assertThat(empty().limit(10), is(empty()));
+	}
+	
+	@Test
+	public void limitFrom1To10ShouldBeTheSameAsRangeClosedFrom1To10(){
+		assertThat(from(1).limit(10), is(rangeClosed(1, 10)));
+	}
+
+	@Test
 	public void containOnlyPrimesWhenIfPrimeStream(){
 		Cons<Integer> primes = (Cons<Integer>) Stream.primes();
-		for (int i = 0; i < 20; i++) {
-			System.out.println("Prime: "+i+" Value: "+primes.head.get());
+		final List<Integer> expectedPrimes = Arrays.asList(1,2,3,5,7); 
+		for (Integer prime: expectedPrimes) {
+			assertThat(primes.head.get(), is(prime));
 			primes = (Cons<Integer>) primes.tail.get();
 		}
 	}
