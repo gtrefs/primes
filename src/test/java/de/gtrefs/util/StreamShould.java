@@ -17,21 +17,21 @@ public class StreamShould {
 	
 	@Test
 	public void beMadeOfLazyCons(){
-		Cons<String> one = cons(() -> "Just one", () -> empty());
+		Cons<String> one = cons(() -> "Just one", Stream::empty);
 		assertThat(one.head.get(), is("Just one"));
 		assertThat(one.tail.get(), is(empty()));
 	}
 	
 	@Test
 	public void beEmptyWhenAllElementsAreFiltered(){
-		final Stream<String> empty = cons(() -> "one", () -> cons(() -> "second", () -> empty())).filter("nope"::equals);
+		final Stream<String> empty = cons(() -> "one", () -> cons(() -> "second", Stream::empty)).filter("nope"::equals);
 		assertThat(empty, is(empty()));
 	}
 	
 	@Test
 	public void containOnlyElementsWhichAreNotFiltered(){
-		final Stream<String> empty = cons(() -> "one", () -> cons(() -> "second", () -> empty())).filter("one"::equals);
-		assertThat(empty, is(cons(() -> "one", () -> empty())));
+		final Stream<String> empty = cons(() -> "one", () -> cons(() -> "second", Stream::empty)).filter("one"::equals);
+		assertThat(empty, is(cons(() -> "one", Stream::empty)));
 	}
 	
 	@Test
@@ -55,7 +55,7 @@ public class StreamShould {
 	
 	@Test
 	public void notMatchIfElementsOfStreamAreNot2(){
-		Stream<Integer> ones = cons(() -> 1, () -> cons(() -> 3, () -> empty()));
+		Stream<Integer> ones = cons(() -> 1, () -> cons(() -> 3, Stream::empty));
 		
 		boolean noneMatch = ones.noneMatch(i -> i == 2);
 		
@@ -82,7 +82,7 @@ public class StreamShould {
 	
 	@Test
 	public void matchShouldBeTheOppositeOfNoneMatch(){
-		Stream<Integer> stream = cons(() -> 2, () -> cons(() -> 4, () -> empty()));
+		Stream<Integer> stream = cons(() -> 2, () -> cons(() -> 4, Stream::empty));
 		
 		boolean match = stream.anyMatch(i -> i % 2 == 0);
 		boolean noneMatch = stream.noneMatch(i -> i % 2 == 0);
@@ -92,7 +92,7 @@ public class StreamShould {
 	
 	@Test
 	public void allMatchShouldMatchIfThereIsNoElementWhereThePredicateDoesNotHold(){
-		Stream<Integer> stream = cons(() -> 2, () -> cons(() -> 4, () -> empty()));
+		Stream<Integer> stream = cons(() -> 2, () -> cons(() -> 4, Stream::empty));
 		
 		boolean match = stream.allMatch(i -> i % 2 == 0);
 		boolean noneMatch = stream.noneMatch(i -> i % 2 == 0);
@@ -103,7 +103,7 @@ public class StreamShould {
 	@Test
 	public void generateStreamWithinRange(){
 		Stream<Integer> streamRange = Stream.rangeClosed(8,9);
-		Stream<Integer> manualStream = cons(() -> 8, () -> cons(() -> 9, () -> empty()));
+		Stream<Integer> manualStream = cons(() -> 8, () -> cons(() -> 9, Stream::empty));
 		
 		assertThat(streamRange, is(manualStream));
 	}
@@ -125,21 +125,21 @@ public class StreamShould {
 	
 	@Test
 	public void generateRangeWithOneElementIfUpperBoundIsowerBound(){
-		assertThat(Stream.rangeClosed(3, 3), is(cons(() -> 3, () -> empty())));
+		assertThat(Stream.rangeClosed(3, 3), is(cons(() -> 3, Stream::empty)));
 	}
 	
 	@Test
 	public void limitInfiniteStreamTo1(){
 		Stream<Integer> limited = constant(1).limit(1);
 		
-		assertThat(limited, is(cons(() -> 1, () -> empty())));
+		assertThat(limited, is(cons(() -> 1, Stream::empty)));
 	}
 	
 	@Test
 	public void limitInfiniteStreamTo2(){
 		Stream<Integer> limited = constant(1).limit(2);
 		
-		Cons<Integer> expected = cons(() -> 1, () -> cons(() -> 1, () -> empty()));
+		Cons<Integer> expected = cons(() -> 1, () -> cons(() -> 1, Stream::empty));
 		
 		assertThat(limited, is(expected));
 	}
