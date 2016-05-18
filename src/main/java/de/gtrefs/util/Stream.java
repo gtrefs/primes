@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 public interface Stream<T> {
 	
-	final static IntPredicate isPrime = x -> rangeClosed(2, (int) (Math.sqrt(x))).allMatch(n -> x % n != 0);
+	IntPredicate isPrime = x -> rangeClosed(2, (int) (Math.sqrt(x))).allMatch(n -> x % n != 0);
 	
 	static <T> Cons<T> cons(Supplier<T> head, Supplier<Stream<T>> rest){
 		return new Cons<>(head, rest);
@@ -36,7 +36,7 @@ public interface Stream<T> {
 	}
 	
 	default Stream<T> filter(Predicate<T> p){
-		return foldRight(() -> Stream.<T>empty(), (el, stream) -> p.test(el)? cons(() -> el, stream) : stream.get());
+		return foldRight(Stream::<T>empty, (el, stream) -> p.test(el)? cons(() -> el, stream) : stream.get());
 	}
 	
 	default <U> U foldRight(Supplier<U> z, BiFunction<T, Supplier<U>, U> f){
@@ -68,7 +68,7 @@ public interface Stream<T> {
 		return empty();
 	}
 	
-	public class Cons<T> implements Stream<T>{
+	class Cons<T> implements Stream<T>{
 		public final Supplier<T> head;
 		public final Supplier<Stream<T>> tail;
 
@@ -103,7 +103,7 @@ public interface Stream<T> {
 		private static final Stream EMPTY = new Stream(){
 			public String toString() {
 				return "EMPTY";
-			};
+			}
 		}; 
 		
 		@SuppressWarnings("unchecked")
