@@ -13,6 +13,7 @@ It provides an implementation for
 - `anyMatch`: True if at least one element in a stream fullfills the predicate
 - `allMatch`: True if all elements in a stream fullfill the predicate
 - `limit`: limits the amount of elements in the stream 
+- `map`: apply given function to each element of the stream 
 
 Primes generation can also be done with Java 8s Stream implementation (look into test source package).
 

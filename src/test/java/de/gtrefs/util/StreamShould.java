@@ -124,7 +124,7 @@ public class StreamShould {
 	}
 	
 	@Test
-	public void generateRangeWithOneElementIfUpperBoundIsowerBound(){
+	public void generateRangeWithOneElementIfUpperBoundIsLowerBound(){
 		assertThat(Stream.rangeClosed(3, 3), is(cons(() -> 3, Stream::empty)));
 	}
 	
@@ -169,5 +169,32 @@ public class StreamShould {
 			assertThat(primes.head.get(), is(prime));
 			primes = (Cons<Integer>) primes.tail.get();
 		}
+	}
+
+	@Test
+	public void mapStreamOfOnesToStreamOfTwosWithLambda(){
+		final Stream<Integer> ones = Stream.constant(1);
+
+		final Stream<Integer> twos = ones.map(i -> i+1);
+
+		assertThat(twos.limit(4), is(Stream.constant(2).limit(4)));
+	}
+
+	@Test
+	public void beEmptyIfMappedStreamIsEmpty(){
+		final Stream<Integer> ones = Stream.empty();
+
+		final Stream<Integer> twos = ones.map(i -> i+1);
+
+		assertThat(twos, is(Stream.empty()));
+	}
+
+	@Test
+	public void mapStringsToTheirLength(){
+		final Stream<String> strings = cons(() -> "first", () -> (Stream.cons(() -> "second", Stream::empty)));
+
+		final Stream<Integer> lengths = strings.map(String::length);
+
+		assertThat(lengths, is(cons(() -> 5, () -> Stream.cons(() -> 6, Stream::empty))));
 	}
 }

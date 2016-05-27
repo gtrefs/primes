@@ -1,10 +1,7 @@
 package de.gtrefs.util;
 
 import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.IntPredicate;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 public interface Stream<T> {
 	
@@ -37,6 +34,10 @@ public interface Stream<T> {
 	
 	default Stream<T> filter(Predicate<T> p){
 		return foldRight(Stream::<T>empty, (el, stream) -> p.test(el)? cons(() -> el, stream) : stream.get());
+	}
+
+	default <S> Stream<S> map(Function<T, S> f){
+		return foldRight(Stream::<S>empty, (el, stream) -> cons(() -> f.apply(el), stream));
 	}
 	
 	default <U> U foldRight(Supplier<U> z, BiFunction<T, Supplier<U>, U> f){
