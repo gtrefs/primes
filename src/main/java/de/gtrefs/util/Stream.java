@@ -1,6 +1,8 @@
 package de.gtrefs.util;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.*;
 
 public interface Stream<T> {
@@ -31,7 +33,17 @@ public interface Stream<T> {
 		if(j < i) return empty();
 		return cons(() -> i, () -> i<j ? rangeClosed(i+1, j) : empty());
 	}
-	
+
+	static <T> Stream<T> from(List<T> list){
+		return unfold(list, l -> l.isEmpty() ? Optional.empty() : Optional.of(Pair.of(l.get(0), l.subList(1, l.size()))));
+	}
+
+	static <A, S> Stream<A> unfold(S z, Function<S, Optional<Pair<A,S>>> f) {
+		final Optional<Pair<A,S>> next = f.apply(z);
+		return next.map(p -> (Stream<A>) cons(() -> p.left, () -> unfold(p.right, f)))
+				.orElseGet(Stream::empty);
+	}
+
 	default Stream<T> filter(Predicate<T> p){
 		return foldRight(Stream::<T>empty, (el, stream) -> p.test(el)? cons(() -> el, stream) : stream.get());
 	}
@@ -47,7 +59,7 @@ public interface Stream<T> {
 		}
 		return z.get();
 	}
-	
+
 	default boolean noneMatch(Predicate<T> p){
 		return filter(p) == empty();
 	}
@@ -67,6 +79,47 @@ public interface Stream<T> {
 			return cons(self.head, () -> self.tail.get().limit(i-1));
 		}
 		return empty();
+	}
+
+	class Pair<L,R> {
+		public final L left;
+		public final R right;
+
+		public Pair(L left, R right){
+			this.left = left;
+			this.right = right;
+		}
+
+		public static <L,R> Pair<L, R> of(L left, R right){
+			return new Pair<>(left, right);
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			Pair<?, ?> pair = (Pair<?, ?>) o;
+
+			if (left != null ? !left.equals(pair.left) : pair.left != null) return false;
+			return right != null ? right.equals(pair.right) : pair.right == null;
+
+		}
+
+		@Override
+		public int hashCode() {
+			int result = left != null ? left.hashCode() : 0;
+			result = 31 * result + (right != null ? right.hashCode() : 0);
+			return result;
+		}
+
+		@Override
+		public String toString() {
+			return "Pair{" +
+					"left=" + left +
+					", right=" + right +
+					'}';
+		}
 	}
 	
 	class Cons<T> implements Stream<T>{
@@ -113,5 +166,4 @@ public interface Stream<T> {
 		}
 
 	}
-
 }

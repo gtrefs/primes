@@ -5,9 +5,11 @@ This repository contains an own implementation of a Stream inspired by [Function
 It provides an implementation for
 - `constant`: Create a infinite stream with given integer
 - `from`: Create an infinite stream counting from the given integer
+- `from`: Create a stream from given list
 - `empty`: Empty stream
 - `filter`: Filter a stream for elements which yield true for a given predicate
 - `foldRight`: Reduce the stream to one value with given aggregate `BiFunction` and neutral element `z`.
+- `unfold`: Unfold stream from initial state and a next state function.
 - `primes`: Infinite stream of prime numbers
 - `rangeClosed`: Range from `start` to `end` (inclusive)
 - `noneMatch`: True if none of the elements in a stream fullfills the predicate
