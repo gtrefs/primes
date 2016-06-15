@@ -1,5 +1,4 @@
-[![Dependency Status](https://www.versioneye.com/user/projects/574bdb74ce8d0e004130d3ea/badge.svg?style=flat)](https://www.versioneye.com/user/projects/574bdb74ce8d0e004130d3ea)
-# Stream Primes
+# Stream Primes [![Build Status](https://travis-ci.org/gtrefs/primes.svg?branch=master)](https://travis-ci.org/gtrefs/primes) [![Dependency Status](https://www.versioneye.com/user/projects/574bdb74ce8d0e004130d3ea/badge.svg?style=flat)](https://www.versioneye.com/user/projects/574bdb74ce8d0e004130d3ea)
 
 This repository contains an own implementation of a Stream inspired by [Functional Programming in Scala](https://www.manning.com/books/functional-programming-in-scala).
 It provides an implementation for
